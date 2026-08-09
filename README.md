@@ -10,7 +10,7 @@ This project investigates a time series logged by a sensor installation on the A
 ### Location Data Was Collected:
 Antarctic Plateau
 [ -77.0730555556, 101.4983333333 ]
-
+<img src="ArcGIS Earth_pin.png" alt="Alternative text" width="800">
 
 ### Data Source:
 
