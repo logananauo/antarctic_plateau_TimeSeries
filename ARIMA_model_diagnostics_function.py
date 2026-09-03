@@ -1,10 +1,8 @@
-### libraries needed:
 import matplotlib.pyplot as plt
 import seaborn as sns
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.graphics.tsaplots import plot_acf
 from statsmodels.tsa.arima.model import ARIMA
-
 
 
 def arima_model_diagnostics(series, p, d, q):
