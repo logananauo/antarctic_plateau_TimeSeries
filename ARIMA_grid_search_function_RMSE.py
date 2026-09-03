@@ -5,32 +5,30 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 from statsmodels.tsa.arima.model import ARIMA
 
 
-def arima_grid_search(train, validation, p_range, d_range, q_range):
+
+split = int(len(series) * 0.80)
+train = series.iloc[:split]
+val = series.iloc[split:]
+print(f"Training observations: {len(train)}")
+print(f"Validation observations: {len(val)}")
+
+
+
+def arima_grid_search_forecast(train, validation, p_range, d_range, q_range):
 
     results = []
 
     for p, d, q in itertools.product(p_range, d_range, q_range):
-
         try:
             ### fit ARIMA model
-            model = ARIMA(
-                train,
-                order=(p, d, q)
-            ).fit()
+            model = ARIMA(train, order=(p, d, q)).fit()
 
             ### forecast validation period
-            forecast = model.forecast(
-                steps=len(validation)
-            )
+            forecast = model.forecast(steps=len(validation))
 
             ### calculate metrics
-            rmse = np.sqrt(
-                mean_squared_error(validation, forecast)
-            )
-
-            mae = mean_absolute_error(
-                validation, forecast
-            )
+            rmse = np.sqrt(mean_squared_error(validation, forecast))
+            mae = mean_absolute_error(validation, forecast)
 
             ### store results
             results.append({
@@ -44,10 +42,7 @@ def arima_grid_search(train, validation, p_range, d_range, q_range):
             })
 
         except Exception as e:
-
-            print(
-                f'ARIMA({p},{d},{q}) failed: {e}'
-            )
+            print(f'ARIMA({p},{d},{q}) failed: {e}')
 
     results_df = pd.DataFrame(results)
 
