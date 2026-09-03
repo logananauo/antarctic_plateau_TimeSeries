@@ -47,8 +47,7 @@ def arima_grid_search(train, validation, p_range, d_range, q_range):
 
 
 
-
-### RUNNING FUNCTION ###
+### ------------- RUNNING FUNCTION ------------- ###
 
 ### 80/20 split
 split = int(len(series) * 0.80)
@@ -59,8 +58,8 @@ print(f"Validation observations: {len(val)}")
 
 ### specifying range of ARIMA parameters; 4*3*4 = 48 total runs
 results = arima_grid_search_forecast(
-    hum_train,
-    hum_val,
+    train,
+    val,
     p_range=range(0, 4),
     d_range=range(0, 3),
     q_range=range(0, 4)
