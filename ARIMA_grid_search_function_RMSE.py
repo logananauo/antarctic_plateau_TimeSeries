@@ -5,16 +5,13 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 from statsmodels.tsa.arima.model import ARIMA
 
 
-
-split = int(len(series) * 0.80)
-train = series.iloc[:split]
-val = series.iloc[split:]
-print(f"Training observations: {len(train)}")
-print(f"Validation observations: {len(val)}")
-
-
-
-def arima_grid_search_forecast(train, validation, p_range, d_range, q_range):
+def arima_grid_search(train, validation, p_range, d_range, q_range):
+    '''Automates the fine-tuning parameter search for ARIMA time-series forecasting.
+    Data must be split into training and validation sets. p, d, q ARIMA parameters
+    may be entered as a range. The functions executes all possible combinations of
+    p, d, q and produces a dataframe of each combination's RMSE, MAE, AIC, and BIC
+    scores for the user to choose the best model based on performance metrics for 
+    predictions and model complexity. '''
 
     results = []
 
@@ -47,3 +44,28 @@ def arima_grid_search_forecast(train, validation, p_range, d_range, q_range):
     results_df = pd.DataFrame(results)
 
     return results_df
+
+
+
+
+### RUNNING FUNCTION ###
+
+### 80/20 split
+split = int(len(series) * 0.80)
+train = series.iloc[:split]
+val = series.iloc[split:]
+print(f"Training observations: {len(train)}")
+print(f"Validation observations: {len(val)}")
+
+### specifying range of ARIMA parameters; 4*3*4 = 48 total runs
+results = arima_grid_search_forecast(
+    hum_train,
+    hum_val,
+    p_range=range(0, 4),
+    d_range=range(0, 3),
+    q_range=range(0, 4)
+)
+
+### output performance results
+results_sorted = results.sort_values(['RMSE', 'MAE']).reset_index(drop=True)
+results_sorted.head(10)
