@@ -6,7 +6,7 @@ from statsmodels.tsa.arima.model import ARIMA
 
 
 def arima_grid_search(train, validation, p_range, d_range, q_range):
-    '''Automates the fine-tuning parameter search for ARIMA time-series forecasting.
+    ''' Automates the fine-tuning parameter search for ARIMA time-series forecasting.
     Data must be split into training and validation sets. p, d, q ARIMA parameters
     may be entered as a range. The functions executes all possible combinations of
     p, d, q and produces a dataframe of each combination's RMSE, MAE, AIC, and BIC
