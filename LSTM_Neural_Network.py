@@ -1,5 +1,5 @@
 ###################################################################
-### ---- Long Short-term Memory - Recurrent Neural Network ---- ###
+### ---- Long Short-Term Memory - Recurrent Neural Network ---- ###
 ###################################################################
 
 ##### =========================== Import Libraries =========================== #####
@@ -31,6 +31,7 @@ np.random.seed(42)
 torch.manual_seed(42)
 
 
+### dataset
 dataset = pd.read_csv('apsrht_datetime.csv', index_col='date_time', parse_dates=True).asfreq('15min')['temp_C']
 
 
@@ -53,7 +54,7 @@ def get_lookback_window(dataset, window_size=60):
     """
     Creates prediction datasets from time series data by splitting into
     "lookback" windows. It looks back 60 measurements to predict the next
-    measurement.
+     1 measurement.
     """
     X, y = [], []
 
@@ -99,30 +100,20 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 class LSTM(nn.Module):
     def __init__(self):
         super().__init__()
-        
-        # LSTM layer
-        self.lstm = nn.LSTM(input_size=1, hidden_size=64, num_layers=1, batch_first=True)
-        
-        # output layer
-        self.fc = nn.Linear(in_features=64, out_features=1)
+        self.lstm = nn.LSTM(input_size=1, hidden_size=64, num_layers=1, batch_first=True)  # LSTM layer
+        self.fc = nn.Linear(in_features=64, out_features=1)  # fully connected output layer
 
     def forward(self, X):  # input shape: (batch_size, sequence_length, input_size)
-    
-        # passes input data into the LSTM
-        output, (hidden, cell) = self.lstm(X)
-        
-        # takes the output from the final time step
-        output = output[:, -1, :]
-        
-        # pass final pattern through linear layer to get predicted temp
-        output = self.fc(output)
+        output, (hidden, cell) = self.lstm(X)  # pass input data into the LSTM layer
+        output = output[:, -1, :]  # take the output from the final time step
+        output = self.fc(output)  # pass final pattern through linear layer
         
         return output
 
 
 model = LSTM().to(device)
-criterion = nn.MSELoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+criterion = nn.MSELoss()  # loss function
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)  # optimizer function
 
 
 
@@ -143,7 +134,7 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()  # clear gradients from previous iteration
         predictions = model(X)  # generate model predictions
         loss = criterion(predictions, y)  # compute loss on predictions
-        loss.backward()  # back propagation; calculate gradients
+        loss.backward()  # back propagate; calculate gradients
         optimizer.step()  # adjust model parameters based on gradients
         train_running_loss += loss.item()
     
@@ -166,7 +157,7 @@ for epoch in range(num_epochs):
     val_losses.append(val_loss)
     
     print(f'=== Epoch {epoch + 1}/{num_epochs} ===')
-    print(f'Training Loss: {epoch_loss:.6f} --- Validation Loss: {val_loss:.6f}\n')
+    print(f'Training Loss: {epoch_loss:.3f} --- Validation Loss: {val_loss:.3f}\n')
 
 
 
@@ -200,9 +191,9 @@ test_mae = mean_absolute_error(all_test_labels, all_test_predictions)
 
 print('-------------------------------------------------------------')
 print('=== Test Results ===')
-print(f'Test MSE: {test_loss:.6f}    (scaled)')
-print(f'Test RMSE: {test_rmse:.2f} degrees_C  (unscaled)')
-print(f'Test MAE: {test_mae:.2f} degrees_C   (unscaled)')
+print(f'Test MSE: {test_loss:.3f}              (scaled)')
+print(f'Test RMSE: {test_rmse:.2f} degrees_C   (unscaled)')
+print(f'Test MAE: {test_mae:.2f}   degrees_C   (unscaled)')
 
 
 
